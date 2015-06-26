@@ -46,13 +46,14 @@ public class Service extends AbstractVerticle {
         ServiceInfo service = new ServiceInfo();
         service.setPort(port);
         service.setNodeId(((VertxInternal)vertx).getNodeID());
-        sendRegisterStatus(service);
+
         this.getVertx().eventBus().consumer(DISCOVERY_ADDR, response -> {
             log.info("New master found " + response.body() + " sending register info");
             sendRegisterStatus(service);
+        }).completionHandler(res->{
+            sendRegisterStatus(service);
         });
         server.requestHandler(req -> {
-        //do something later
         }).listen(port);
     }
 
